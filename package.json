@@ -1,7 +1,7 @@
 {
   "main": "./lib/app",
   "license": "Apache2",
-  "name": "gameapi-couchbase",
+  "name": "serverFarm",
   "dependencies": {
     "couchbase": "git+https://github.com/couchbase/couchnode.git#master",
     "express": "^3.17.6",

@@ -1,0 +1,309 @@
+{
+  "items": {
+    "1": {
+      "texture": "cottage",
+      "name": "cottage",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 3,
+      "height": 3,
+      "step": 3
+    },
+    "2": {
+      "texture": "road",
+      "name": "road 2",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "road",
+      "width": 2,
+      "height": 2,
+      "step": 1
+    },
+    "3": {
+      "texture": "boutique",
+      "name": "boutique",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 4,
+      "height": 4,
+      "step": 4
+    },
+    "4": {
+      "texture": "club",
+      "name": "club",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 4,
+      "height": 4,
+      "step": 2
+    },
+    "5": {
+      "texture": "concert_hall",
+      "name": "concert_hall",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 7,
+      "height": 7,
+      "step": 2
+    },
+    "6": {
+      "texture": "flower_shop",
+      "name": "flower_shop",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 3,
+      "height": 2,
+      "step": 3
+    },
+    "7": {
+      "texture": "hotel",
+      "name": "hotel",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 6,
+      "height": 6,
+      "step": 4
+    },
+    "8": {
+      "texture": "house",
+      "name": "house",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 3,
+      "height": 3,
+      "step": 2
+    },
+    "9": {
+      "texture": "mansion",
+      "name": "mansion",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 4,
+      "height": 4,
+      "step": 3
+    },
+    "10": {
+      "texture": "police",
+      "name": "police",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 6,
+      "height": 6,
+      "step": 8
+    },
+    "11": {
+      "texture": "school",
+      "name": "school",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 5,
+      "height": 5,
+      "step": 6
+    },
+    "12": {
+      "texture": "shop_shoes",
+      "name": "shop_shoes",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 3,
+      "height": 3,
+      "step": 3
+    },
+    "13": {
+      "texture": "slims_villa",
+      "name": "slims_villa",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 6,
+      "height": 6,
+      "step": 3
+    },
+    "14": {
+      "texture": "tennis_court",
+      "name": "tennis_court",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 3,
+      "height": 4,
+      "step": 3
+    },
+    "15": {
+      "texture": "tokyo_tower",
+      "name": "tokyo_tower",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 5,
+      "height": 4,
+      "step": 7
+    },
+    "16": {
+      "texture": "villa",
+      "name": "villa",
+      "price": 500,
+      "income": 200,
+      "time": 300,
+      "type": "building",
+      "width": 5,
+      "height": 5,
+      "step": 4
+    }
+  },
+  "tabs": {
+    "house": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "decoration": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ]
+  },
+  "anim": {
+    "animations": {},
+    "images": [
+      "assets/window_shop.png"
+    ],
+    "frames": [
+      [
+        0,
+        0,
+        714,
+        494,
+        0,
+        357,
+        278.2
+      ],
+      [
+        714,
+        0,
+        152,
+        170,
+        0,
+        0,
+        -0.8000000000000114
+      ],
+      [
+        714,
+        170,
+        64,
+        51,
+        0,
+        0,
+        -6.800000000000011
+      ],
+      [
+        714,
+        221,
+        64,
+        51,
+        0,
+        0,
+        -5.800000000000011
+      ],
+      [
+        714,
+        272,
+        31,
+        65,
+        0,
+        15,
+        31.19999999999999
+      ],
+      [
+        714,
+        337,
+        31,
+        65,
+        0,
+        15,
+        31.19999999999999
+      ],
+      [
+        0,
+        494,
+        35,
+        37,
+        0,
+        17,
+        17.19999999999999
+      ],
+      [
+        35,
+        494,
+        35,
+        37,
+        0,
+        17,
+        17.19999999999999
+      ],
+      [
+        714,
+        402,
+        31,
+        65,
+        0,
+        15,
+        31.19999999999999
+      ],
+      [
+        714,
+        467,
+        31,
+        65,
+        0,
+        15,
+        31.19999999999999
+      ]
+    ]
+  }
+}
