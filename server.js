@@ -23,6 +23,7 @@ var HastMap = require('./lib/structs/hashtable');
 var Player = require('./lib/structs/player');
 var shopConfig = require('./config/shopconf').shopConf;
 var shortId = require('shortid');
+var Helper = require('./lib/utils/helper');
 
 io.set('origins', 'http://localhost:63342');
 
@@ -147,8 +148,24 @@ io.on('connection', function(socket){
         socket.emit(_msg_buy_, {result : false});
     });
     //===================================== Harvest ===========================
-    socket.on(_msg_harvest_, function(msg){
-
+    socket.on(_msg_harvest_, function(params){
+        var player = m_listPlayer.getItem(params.userId);
+        if( player != null )
+        {
+            var building = player.buildings.get(params.buildingId);
+            if( building != null )
+            {
+                var config = shopConfig[building.shop_id];
+                if( building.last_harvest == 0 || building.last_harvest + config.time <= Helper.getSeconds() )
+                {
+                    console.log("harvest building");
+                    building.last_harvest = Helper.getSeconds();
+                    player.socket.emit(_msg_harvest_, {result : true});
+                    return;
+                }
+            }
+        }
+        socket.socket.emit(_msg_harvest_, {result : false});
     });
     //===================================== move ===========================
     socket.on(_msg_move_, function(params){
@@ -181,7 +198,7 @@ io.on('connection', function(socket){
                 return;
             }
         }
-        player.socket.emit(_msg_delete_, {result : false});
+        socket.socket.emit(_msg_delete_, {result : false});
     });
     //===================================== visit friend ===========================
     socket.on(_msg_visit_, function(msg){
@@ -200,7 +217,7 @@ http.listen(3000, function(){
 
 //**********************************************************************************
 function responseLogin(player){
-    player.socket.emit(_msg_login_, {result : true, game: player.game, buildings : player.buildings.map});
+    player.socket.emit(_msg_login_, {result : true, time : Helper.getSeconds(), game: player.game, buildings : player.buildings.map});
 }
 
 function responseLoginFail(player){
@@ -225,4 +242,7 @@ function savePlayer(player){
     });
 }
 
-
+//======================================= Prevent crash =========================
+process.on('uncaughtException', function (error) {
+    console.log(error.stack);
+});

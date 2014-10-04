@@ -5,7 +5,7 @@
       "name": "cottage",
       "price": 500,
       "income": 200,
-      "time": 300,
+      "time": 15,
       "type": "building",
       "width": 3,
       "height": 3,
