@@ -7,3 +7,4 @@ npm install --save socket.io
 npm install uuid
 npm install crypto
 npm install flake-idgen
+npm install shortid --save

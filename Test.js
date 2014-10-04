@@ -32,6 +32,12 @@
 //======================================== Load Json ===================================
 //var parsedJSON = require('./asset/window_shop.json');
 //console.log(parsedJSON);
+////========================================= config =====================================
+//var shopConfig = require('./config/shopconf').shopConf;
+//console.log(shopConfig);
 //========================================= config =====================================
-var shopConfig = require('./config/shopconf').shopConf;
-console.log(shopConfig);
+//var uuid = require('node-uuid')
+//console.log(uuid);
+
+var shortId = require('shortid');
+console.log(shortId.generate());

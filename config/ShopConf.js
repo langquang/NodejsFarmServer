@@ -5,6 +5,6 @@
 'use strict';
 
 var parsedJSON = require('../asset/window_shop.json');
-
+parsedJSON = parsedJSON.items;
 // Connect to our Couchbase server
 module.exports.shopConf = parsedJSON;
