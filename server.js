@@ -66,9 +66,8 @@ io.on('connection', function(socket){
     });
 
     //===================================== Login ===========================
-    socket.on(_msg_login_, function(msg){
-        console.log("*** Login ***" + msg);
-        var params = JSON.parse(msg);
+    socket.on(_msg_login_, function(params){
+        console.log("*** Login ***");
         var player = new Player(null, null, socket);
         // user exist?
         checkUserId.create(params.userId, function (err, userId) {
@@ -129,9 +128,7 @@ io.on('connection', function(socket){
 
     });
     //===================================== Buy =============================
-    socket.on(_msg_buy_, function(msg){
-        console.log("*** Buy ***" + msg);
-        var params = JSON.parse(msg);
+    socket.on(_msg_buy_, function(params){
         var player = m_listPlayer.getItem(params.userId);
         if( player != null )
         {
@@ -139,33 +136,47 @@ io.on('connection', function(socket){
             var config = shopConfig[params.id];
 //            if( config.price > player.game.gold )
 //            {
-                var building = new BuildingData(config.type, params.id, shortId.generate(), 0, params.x, params.y);
+                var entityId = shortId.generate();
+                var building = new BuildingData(config.type, params.id, entityId, 0, params.x, params.y);
                 player.buildings.add(building);
-                player.socket.emit(_msg_buy_, {result : true});
+                player.socket.emit(_msg_buy_, {result : true, temptId : params.temptId, entityId : entityId});
                 return;
 //            }
         }
         console.log("not found player");
-        player.socket.emit(_msg_buy_, {result : false});
+        socket.emit(_msg_buy_, {result : false});
     });
     //===================================== Harvest ===========================
     socket.on(_msg_harvest_, function(msg){
 
     });
     //===================================== move ===========================
-    socket.on(_msg_move_, function(msg){
-
-    });
-    //===================================== delete ===========================
-    socket.on(_msg_delete_, function(msg){
-        var params = JSON.parse(msg);
+    socket.on(_msg_move_, function(params){
         var player = m_listPlayer.getItem(params.userId);
         if( player != null )
         {
-            var building = player.buildings.getItem(params.buildingId);
+            var building = player.buildings.get(params.buildingId);
             if( building != null )
             {
-                player.buildings.removeItem(params.buildingId);
+                console.log("move building");
+                building.x = params.x;
+                building.y = params.y;
+                player.socket.emit(_msg_move_, {result : true});
+                return;
+            }
+        }
+        player.socket.emit(_msg_move_, {result : false});
+    });
+    //===================================== delete ===========================
+    socket.on(_msg_delete_, function(params){
+        var player = m_listPlayer.getItem(params.userId);
+        if( player != null )
+        {
+            var building = player.buildings.get(params.buildingId);
+            if( building != null )
+            {
+                console.log("delete building");
+                delete player.buildings.remove(params.buildingId);
                 player.socket.emit(_msg_delete_, {result : true});
                 return;
             }
@@ -189,7 +200,7 @@ http.listen(3000, function(){
 
 //**********************************************************************************
 function responseLogin(player){
-    player.socket.emit(_msg_login_, JSON.stringify({result : true, game: player.game, buildings : player.buildings.map}));
+    player.socket.emit(_msg_login_, {result : true, game: player.game, buildings : player.buildings.map});
 }
 
 function responseLoginFail(player){
