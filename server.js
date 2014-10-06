@@ -13,6 +13,9 @@ var buildingsModel = require('./lib/models/buildinglistmodel');
 var BuildingData = require('./lib/models/data/buildingdata');
 var GameData = require('./lib/models/data/gamedata');
 var BuildingListData = require('./lib/models/data/BuildingListData');
+var FriendModel = require('./lib/models/FriendModel');
+var FriendList = require('./lib/models/FriendList');
+var LoadFriendList = require('./lib/models/LoadFriendModel');
 
 
 var app = require('express')();
@@ -34,6 +37,7 @@ app.get('/', function (req, res) {
 //==================================== global variable ==========================
 var m_listPlayer = new HastMap();
 var m_listSocket = new HastMap();
+var m_friend10 = [];
 //==================================== MSG ===============================
 var _msg_login_ = "login";
 var _msg_buy_ = "buy";
@@ -43,25 +47,36 @@ var _msg_delete_ = "delete";
 var _msg_visit_ = "visit";
 var _msg_boots_ = "boots";
 
+//create friend list
+FriendList.get(function (err, friendlistDoc) {
+    if (err) {
+        m_friend10 = [];
+    } else {
+        m_friend10 = friendlistDoc;
+    }
+});
+
+
 io.on('connection', function (socket) {
 
     socket.on('disconnect', function () {
         console.log('DISCONNESSO!!! ');
         var player = m_listSocket.getItem(socket.id);
         if (player != null) {
-            gameModel.save(player.getId(), player.game, function (err, result) {
-                if (err) {
-                    console.log("Save Game fail! - " + player.getId());
-                    return;
-                }
-                buildingsModel.save(player.getId(), player.buildings, function (err, result) {
-                    if (err) {
-                        console.log("Save buildings fail! - " + player.getId());
-                        return;
-                    }
-                    console.log("Save  - " + player.getId() + " - success");
-                })
-            })
+                savePlayer(player);
+//            gameModel.save(player.getId(), player.game, function (err, result) {
+//                if (err) {
+//                    console.log("Save Game fail! - " + player.getId());
+//                    return;
+//                }
+//                buildingsModel.save(player.getId(), player.buildings, function (err, result) {
+//                    if (err) {
+//                        console.log("Save buildings fail! - " + player.getId());
+//                        return;
+//                    }
+//                    console.log("Save  - " + player.getId() + " - success");
+//                })
+//            })
         }
     });
 
@@ -93,7 +108,16 @@ io.on('connection', function (socket) {
                                 // add player to list
                                 m_listPlayer.setItem(player.getId(), player);
                                 m_listSocket.setItem(socket.id, player);
-                                return responseLogin(player);
+
+                                FriendModel.get(params.userId, function (err, friendDoc) {
+                                    if (err) {
+                                        console.log('Loaded Friend: ' + params.userId + ' fail!' + err);
+                                        player.friends = {};
+                                    } else {
+                                        player.friends = friendDoc;
+                                    }
+                                    return responseLogin(player);
+                                })
                             }
                         })
                     }
@@ -119,7 +143,16 @@ io.on('connection', function (socket) {
                                 player.buildings = buildingsDoc;
                                 // add player to list
                                 m_listPlayer.setItem(player.getId(), player);
-                                return responseLogin(player);
+                                m_listSocket.setItem(socket.id, player);
+                                FriendModel.create(params.userId, function (err, frienddoc) {
+                                    if (err) {
+                                        console.log('Create friend: ' + params.userId + ' fail!' + err);
+                                        player.friends = {};
+                                    } else {
+                                        player.friends = frienddoc;
+                                        return responseLogin(player);
+                                    }
+                                })
                             }
                         })
                     }
@@ -200,12 +233,51 @@ io.on('connection', function (socket) {
         socket.socket.emit(_msg_delete_, {result: false});
     });
     //===================================== visit friend ===========================
-    socket.on(_msg_visit_, function (msg) {
+    socket.on(_msg_visit_, function (params) {
+        if (m_listSocket.hasItem(socket.id)) {
+            var player = m_listSocket.getItem(socket.id);
+            if (player != null) {
+                if (player.getId() == params.friendId) // go home
+                {
+                    socket.emit(_msg_visit_, {result: true, buildings: player.buildings.map, userId: params.friendId});
+                }
+                else    // visit friend
+                {
+                    buildingsModel.get(params.friendId, function (err, doc) {
+                        if (err) {
+                            console.log("visit fail" + params.friendId);
+                            socket.emit(_msg_visit_, {result: false});
+                            return;
+                        }
+                        console.log("visit success" + params.friendId);
+                        socket.emit(_msg_visit_, {result: true, buildings: doc.map, userId: params.friendId});
+                    })
+                }
+            }
+        }
+        else {
+            socket.emit(_msg_visit_, {result: false});
+        }
 
     });
     //===================================== boots friend ===========================
-    socket.on(_msg_boots_, function (msg) {
+    socket.on(_msg_boots_, function (params) {
+        if( m_listSocket.hasItem(socket.id) )
+        {
+            var player = m_listSocket.getItem(socket.id)
+            if( player != null ){
+                if( player.friends.hasOwnProperty(params.friendId) && player.friends[params.friendId] > 0){
+                    player.friends[params.friendId]--;
+                    player.game.gold += 10;
+                    socket.emit(_msg_boots_, {result: true});
+                    console.log("Boots success");
+                    return;
+                }
+            }
 
+        }
+        socket.emit(_msg_boots_, {result: false});
+        console.log("Boots fail");
     });
 });
 
@@ -216,7 +288,43 @@ http.listen(3000, function () {
 
 //**********************************************************************************
 function responseLogin(player) {
-    player.socket.emit(_msg_login_, {result: true, time: Helper.getSeconds(), game: player.game, buildings: player.buildings.map});
+    // add current user to list
+    if (m_friend10.indexOf(player.getId()) == -1) {
+        m_friend10.push(player.getId());
+        if (m_friend10.length > 10) {
+            m_friend10.pop();
+        }
+    }
+    FriendList.save(m_friend10, function (err, result) {
+        if (err) {
+            console.log("save friend10 error")
+        }
+    });
+
+    // add friend to current usser
+    for (var key in player.friends) {
+        if (m_friend10.indexOf(key) == -1) {
+            delete player.friends[key];
+        }
+    }
+
+    m_friend10.forEach(function (element, index, array) {
+        if (!player.friends.hasOwnProperty(element)) {
+            player.friends[element] = 5;
+        }
+    });
+    // read friend data
+    LoadFriendList.get(m_friend10, function (err, doc) {
+        if (err) {
+            player.friendInfo = {};
+        }
+        else {
+            player.friendInfo = doc;
+        }
+        player.socket.emit(_msg_login_, {result: true, time: Helper.getSeconds(), game: player.game, friend: player.friends, friendInfo: player.friendInfo, buildings: player.buildings.map});
+    });
+
+
 }
 
 function responseLoginFail(player) {
@@ -235,6 +343,11 @@ function savePlayer(player) {
                     console.log('Saved Buildings: ' + player.getId() + ' fail!' + err);
                 } else {
                     console.log('Saved: Building');
+                    FriendModel.save(player.getId(), player.friends, function (err, doc) {
+                        if (err) {
+                            console.log('Saved Buildings: ' + player.getId() + ' fail!' + err);
+                        }
+                    })
                 }
             })
         }
