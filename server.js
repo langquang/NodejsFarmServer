@@ -63,20 +63,7 @@ io.on('connection', function (socket) {
         console.log('DISCONNESSO!!! ');
         var player = m_listSocket.getItem(socket.id);
         if (player != null) {
-                savePlayer(player);
-//            gameModel.save(player.getId(), player.game, function (err, result) {
-//                if (err) {
-//                    console.log("Save Game fail! - " + player.getId());
-//                    return;
-//                }
-//                buildingsModel.save(player.getId(), player.buildings, function (err, result) {
-//                    if (err) {
-//                        console.log("Save buildings fail! - " + player.getId());
-//                        return;
-//                    }
-//                    console.log("Save  - " + player.getId() + " - success");
-//                })
-//            })
+            savePlayer(player);
         }
     });
 
@@ -95,6 +82,7 @@ io.on('connection', function (socket) {
                         console.log("Loaded game fail!");
                     } else {
                         console.log("Loaded game success!");
+                        gameDoc.lastLogin = Helper.getSeconds();
                         player.game = gameDoc;
                         player.game.updateEnegry();
 
@@ -163,71 +151,80 @@ io.on('connection', function (socket) {
     });
     //===================================== Buy =============================
     socket.on(_msg_buy_, function (params) {
-        var player = m_listPlayer.getItem(params.userId);
-        if (player != null) {
-            console.log("create buidling");
-            var config = shopConfig[params.id];
-            if (config.price <= player.game.gold) {
-                var entityId = shortId.generate();
-                var building = new BuildingData(config.type, params.id, entityId, 0, params.x, params.y);
-                player.buildings.add(building);
-                player.game.gold -= config.price;
-                player.socket.emit(_msg_buy_, {result: true, temptId: params.temptId, entityId: entityId});
-                return;
+        if (m_listSocket.hasItem(socket.id)) {
+            var player = m_listSocket.getItem(socket.id);
+            if (player != null) {
+                console.log("create buidling");
+                var config = shopConfig[params.id];
+                if (config.price <= player.game.gold) {
+                    var entityId = shortId.generate();
+                    var building = new BuildingData(config.type, params.id, entityId, 0, params.x, params.y);
+                    player.buildings.add(building);
+                    player.game.gold -= config.price;
+                    player.socket.emit(_msg_buy_, {result: true, temptId: params.temptId, entityId: entityId});
+                    return;
+                }
             }
         }
+
         console.log("not found player");
         socket.emit(_msg_buy_, {result: false});
     });
     //===================================== Harvest ===========================
     socket.on(_msg_harvest_, function (params) {
-        var player = m_listPlayer.getItem(params.userId);
-        if (player != null) {
-            var building = player.buildings.get(params.buildingId);
-            if (building != null) {
-                player.game.updateEnegry();
-                if (player.game.energy > 0) {
-                    var config = shopConfig[building.shop_id];
-                    if (building.last_harvest == 0 || building.last_harvest + config.time <= Helper.getSeconds()) {
-                        console.log("harvest building");
-                        building.last_harvest = Helper.getSeconds();
-                        player.game.energy--;
-                        player.game.gold += config.income;
-                        player.game.exp += 1;
-                        player.socket.emit(_msg_harvest_, {result: true});
-                        return;
+        if (m_listSocket.hasItem(socket.id)) {
+            var player = m_listSocket.getItem(socket.id);
+            if (player != null) {
+                var building = player.buildings.get(params.buildingId);
+                if (building != null) {
+                    player.game.updateEnegry();
+                    if (player.game.energy > 0) {
+                        var config = shopConfig[building.shop_id];
+                        if (building.last_harvest == 0 || building.last_harvest + config.time <= Helper.getSeconds()) {
+                            console.log("harvest building");
+                            building.last_harvest = Helper.getSeconds();
+                            player.game.energy--;
+                            player.game.gold += config.income;
+                            player.game.exp += 1;
+                            player.socket.emit(_msg_harvest_, {result: true});
+                            return;
+                        }
                     }
-                }
 
+                }
             }
         }
         socket.emit(_msg_harvest_, {result: false});
     });
     //===================================== move ===========================
     socket.on(_msg_move_, function (params) {
-        var player = m_listPlayer.getItem(params.userId);
-        if (player != null) {
-            var building = player.buildings.get(params.buildingId);
-            if (building != null) {
-                console.log("move building");
-                building.x = params.x;
-                building.y = params.y;
-                player.socket.emit(_msg_move_, {result: true});
-                return;
+        if (m_listSocket.hasItem(socket.id)) {
+            var player = m_listSocket.getItem(socket.id);
+            if (player != null) {
+                var building = player.buildings.get(params.buildingId);
+                if (building != null) {
+                    console.log("move building");
+                    building.x = params.x;
+                    building.y = params.y;
+                    player.socket.emit(_msg_move_, {result: true});
+                    return;
+                }
             }
         }
         player.socket.emit(_msg_move_, {result: false});
     });
     //===================================== delete ===========================
     socket.on(_msg_delete_, function (params) {
-        var player = m_listPlayer.getItem(params.userId);
-        if (player != null) {
-            var building = player.buildings.get(params.buildingId);
-            if (building != null) {
-                console.log("delete building");
-                delete player.buildings.remove(params.buildingId);
-                player.socket.emit(_msg_delete_, {result: true});
-                return;
+        if (m_listSocket.hasItem(socket.id)) {
+            var player = m_listSocket.getItem(socket.id);
+            if (player != null) {
+                var building = player.buildings.get(params.buildingId);
+                if (building != null) {
+                    console.log("delete building");
+                    delete player.buildings.remove(params.buildingId);
+                    player.socket.emit(_msg_delete_, {result: true});
+                    return;
+                }
             }
         }
         socket.socket.emit(_msg_delete_, {result: false});
@@ -313,6 +310,9 @@ function responseLogin(player) {
             player.friends[element] = 5;
         }
     });
+
+    updateLogin(player);
+
     // read friend data
     LoadFriendList.get(m_friend10, function (err, doc) {
         if (err) {
@@ -352,6 +352,16 @@ function savePlayer(player) {
             })
         }
     });
+}
+
+function updateLogin(player){
+    var curday = Math.floor(Helper.getSeconds() / 86400);
+    var lastday = Math.floor(player.game.lastLogin / 86400);
+    if( curday > lastday ){
+        for(var key in player.friends){
+            player.friends[key] = 5;
+        }
+    }
 }
 
 //======================================= Prevent crash =========================
