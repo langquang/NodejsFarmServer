@@ -25,6 +25,7 @@ var path = require('path');
 var HastMap = require('./lib/structs/hashtable');
 var Player = require('./lib/structs/player');
 var shopConfig = require('./config/shopconf').shopConf;
+var mapConfig = require('./config/MapConfig').mapConf;
 var shortId = require('shortid');
 var Helper = require('./lib/utils/helper');
 
@@ -83,6 +84,11 @@ io.on('connection', function (socket) {
                     } else {
                         console.log("Loaded game success!");
                         gameDoc.lastLogin = Helper.getSeconds();
+
+                        //******************************************************* Cheat
+                        gameDoc.gold = 100000000;
+                        gameDoc.energy = 20;
+
                         player.game = gameDoc;
                         player.game.updateEnegry();
 
@@ -123,7 +129,7 @@ io.on('connection', function (socket) {
                         player.game = gameDoc;
 
                         // create buidling List
-                        buildingsModel.create(params.userId, function (err, buildingsDoc) {
+                        buildingsModel.create(params.userId, mapConfig, shopConfig, shortId, function (err, buildingsDoc) {
                             if (err) {
                                 console.log('Create Buildings: ' + params.userId + ' fail!' + err);
                             } else {
