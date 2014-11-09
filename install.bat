@@ -8,3 +8,4 @@ npm install uuid
 npm install crypto
 npm install flake-idgen
 npm install shortid --save
+npm install ejs

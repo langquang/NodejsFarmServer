@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TheNewCity - Công nghệ web & ứng dụng</title>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<meta charset="UTF-8">
+<link href="assets/message_default.css" rel="stylesheet" type="text/css"/>
+<link href="assets/farmStyles.css" rel="stylesheet" type="text/css"/>
+
+<style>
+
+    canvas {
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+
+    #farmCanvas {
+        border: 1px solid white;
+    }
+</style>
+
+<!--Message box-->
+<script type="text/javascript" src="message.js"></script>
+<!-- Note: All core EaselJS classes are listed here: -->
+<!--<script type="text/javascript" src="../src/createjs/events/Event.js"></script>-->
+<!--<script type="text/javascript" src="../src/createjs/events/EventDispatcher.js"></script>-->
+<!--<script type="text/javascript" src="../src/createjs/utils/Proxy.js"></script>-->
+<!--<script type="text/javascript" src="../src/preloadjs/AbstractLoader.js"></script>-->
+<!--<script type="text/javascript" src="../src/preloadjs/LoadQueue.js"></script>-->
+<!--<script type="text/javascript" src="../src/preloadjs/TagLoader.js"></script>-->
+<!--<script type="text/javascript" src="../src/preloadjs/XHRLoader.js"></script>-->
+<!--<script type="text/javascript" src="../src/createjs/utils/IndexOf.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/utils/UID.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/utils/Ticker.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/geom/Matrix2D.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/geom/Point.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/geom/Rectangle.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/Shadow.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/SpriteSheet.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/Graphics.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/DisplayObject.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/Container.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/Stage.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/Bitmap.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/Sprite.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/BitmapAnimation.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/BitmapText.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/Shape.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/Text.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/display/DOMElement.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/events/MouseEvent.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/filters/Filter.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/ui/ButtonHelper.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/ui/Touch.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/utils/SpriteSheetUtils.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/utils/SpriteSheetBuilder.js"></script>-->
+
+<!--<script type="text/javascript" src="../src/easeljs/filters/BlurFilter.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/filters/ColorFilter.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/filters/ColorMatrix.js"></script>-->
+<!--<script type="text/javascript" src="../src/easeljs/filters/ColorMatrixFilter.js"></script>-->
+
+<script type="text/javascript" src="sylvester.src.js"></script>
+<script type="text/javascript" src="preloadjs-NEXT.min.js"></script>
+<script type="text/javascript" src="easeljs-NEXT.min.js"></script>
+<script type="text/javascript" src="tweenjs-NEXT.min.js"></script>
+<!--<script type="text/javascript" src="Ease.js"></script>-->
+<script type="text/javascript" src="socket.io-1.1.0.js"></script>
+<script type="text/javascript" src="network.js"></script>
+
+<script type="text/javascript" src="HashTable.js"></script>
+<script type="text/javascript" src="IsoEntity.js"></script>
+<script type="text/javascript" src="Road.js"></script>
+<script type="text/javascript" src="Deco.js"></script>
+<script type="text/javascript" src="Building.js"></script>
+<script type="text/javascript" src="Helper.js"></script>
+<script type="text/javascript" src="Cursor.js"></script>
+<script type="text/javascript" src="IsoState.js"></script>
+<script type="text/javascript" src="ShopItem.js"></script>
+<script type="text/javascript" src="DialogShop.js"></script>
+<script type="text/javascript" src="FriendListItem.js"></script>
+<script type="text/javascript" src="MainBar.js"></script>
+<script type="text/javascript" src="Hub.js"></script>
+<script type="text/javascript" src="DarkLock.js"></script>
+<script type="text/javascript" src="EntityInfo.js"></script>
+<script type="text/javascript" src="HarvestBar.js"></script>
+<script type="text/javascript" src="FallIcon.js"></script>
+
+<!-- We also provide hosted minified versions of all CreateJS libraries.
+  http://code.createjs.com -->
+
+<script>
+
+var gCanvas;
+var gStage;
+var fpsLabel;
+var loader;
+var stageLocLabel;
+var stageLocLabel2;
+var gBackground;
+// container
+var gGameContainer;
+var gGridContainer;
+var gRoadsContainer;
+var gIsoContainer;
+var gIsoFallIconContainer;
+var gMapIconContainer;
+var gCursorsContainer;
+var gUIContainer;
+var gResourceContainer;
+var gDarkLock;
+// instance
+var gIsoState;
+var gCursor;
+var gShop;
+var gMainBar;
+var gHud;
+var gEntityInfo;
+//        var gHarvestBar;
+// constance
+var stageWidth, stageHeight;
+var gAnchorX = 2452;
+var gAnchorY = 856;
+var gUserId = "";//"butin13";
+var gCurUserId = gUserId;
+
+// config
+var gItemConfig;
+var gTextData;
+// embed
+var gLoader;
+var gMap_Icons;
+var gGoldSheet;
+var gDeltaTime = 0;
+var gIsLogin = false;
+
+function webLoaded() {
+    if (gUserId != null && gUserId.length > 0) {
+        init();
+    }
+    else {
+        showInputName();
+    }
+
+}
+
+var box;
+function showInputName() {
+    box = dhtmlx.modalbox({
+        title: "Đăng nhập",
+        text: "<div id='form_in_box'><div><label> Tên nhân vật <input  id=\"txtName\" class='inform' type='text' onkeypress=\"onKeyPress(event);\"></label></div><div><span class='dhtmlx_button'><input type='button' value='Vào game' onclick='checkLogin()' style='width:250px;'></span></label></div></div>",
+        width: "300px"
+    });
+    //timeout is necessary only in IE
+    setTimeout(function () {
+        box.getElementsByTagName("input")[0].focus();
+    }, 1);
+}
+
+function onKeyPress(e) {
+
+    if (e.keyCode == 13)// enter
+    {
+        checkLogin();
+    }
+    else if (e.keyCode != 8) {
+        var regex = new RegExp("^[a-zA-Z0-9]+$");
+        var key = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+        if (!regex.test(key)) {
+            e.preventDefault();
+            return false;
+        }
+    }
+
+}
+
+function checkLogin() {
+    gUserId = document.getElementById("txtName").value;
+    if (gUserId != null && gUserId.length > 0) {
+        dhtmlx.modalbox.hide(box);
+        gCurUserId = gUserId;
+        init();
+    }
+}
+
+
+function init() {
+    //=================================== Stage =============================================
+    //find canvas
+    gCanvas = document.getElementById("farmCanvas");
+    stageWidth = gCanvas.width;
+    stageHeight = gCanvas.height;
+    // create a new gStage and point it at our canvas:
+    gStage = new createjs.Stage(gCanvas);
+    // to get onMouseOver & onMouseOut events, we need to enable them on the gStage:
+    gStage.enableMouseOver();
+    // mousemove
+    gStage.mouseMoveOutside = true;
+
+    //====================================== gBackground ======================================
+    gBackground = new createjs.Bitmap("assets/background.jpg");
+
+    //===================================== container ========================================
+    // layer 0 - Game
+    gGameContainer = new createjs.Container();
+    gStage.addChild(gGameContainer);
+    // layer 1
+    gGameContainer.addChild(gBackground);
+    // layer 2
+    gGridContainer = new createjs.Container();
+    gGridContainer.x = gAnchorX;
+    gGridContainer.y = gAnchorY;
+    gGameContainer.addChild(gGridContainer);
+    // layer 3
+    gRoadsContainer = new createjs.Container();
+    gRoadsContainer.x = gAnchorX;
+    gRoadsContainer.y = gAnchorY;
+    gGameContainer.addChild(gRoadsContainer);
+    // layer 4
+    gIsoContainer = new createjs.Container();
+    gIsoContainer.x = gAnchorX;
+    gIsoContainer.y = gAnchorY;
+    gGameContainer.addChild(gIsoContainer);
+    // layer 4
+    gIsoFallIconContainer = new createjs.Container();
+    gIsoFallIconContainer.x = gAnchorX;
+    gIsoFallIconContainer.y = gAnchorY;
+    gGameContainer.addChild(gIsoFallIconContainer);
+    // layer 5
+    gMapIconContainer = new createjs.Container();
+    gMapIconContainer.x = gAnchorX;
+    gMapIconContainer.y = gAnchorY;
+    gGameContainer.addChild(gMapIconContainer);
+    // layer 6
+    gCursorsContainer = new createjs.Container();
+    gCursorsContainer.x = gAnchorX;
+    gCursorsContainer.y = gAnchorY;
+    gGameContainer.addChild(gCursorsContainer);
+    // layer 7- UI
+    gUIContainer = new createjs.Container();
+    gStage.addChild(gUIContainer);
+    // layer 8 - tween resource
+    gResourceContainer = new createjs.Container();
+    gStage.addChild(gResourceContainer);
+
+
+    // ==================================== Instance =========================================
+    gDarkLock = new DarkLock();
+    gDarkLock.show(true);
+    // ===================================  stats ============================================
+    stageLocLabel = new createjs.Text("", "bold 14px Arial", "#000");
+    stageLocLabel.x = 10;
+    stageLocLabel.y = 5;
+    stageLocLabel.outline = 4;
+    gStage.addChild(stageLocLabel);
+
+    var stageLocLabel2 = stageLocLabel.clone();
+    stageLocLabel2.outline = false;
+    stageLocLabel2.color = "#fff";
+    gStage.addChild(stageLocLabel2);
+
+    // add a text object to output the current FPS:
+    fpsLabel = new createjs.Text("-- fps", "bold 14px Arial", "#FFF");
+    gStage.addChild(fpsLabel);
+    fpsLabel.x = 10;
+    fpsLabel.y = 20;
+
+    // start the tick and point it at the window so we can do some work before updating the gStage:
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", tick);
+    gStage.on("stagemousemove", function (evt) {
+        stageLocLabel.text = "stage: " + evt.stageX + "," + evt.stageY + "\t\t";
+        var screenP = stageToScreen(evt.stageX, evt.stageY);
+//                stageLocLabel.text += "screen: " + screenP.e(1) + "," + screenP.e(2) + "\t\t";
+        var isoP = stageToIso(evt.stageX, evt.stageY);
+//                stageLocLabel.text += "iso: " + isoP.e(1) + "," + isoP.e(2) + "\t\t";
+        var cell = stageToCell(evt.stageX, evt.stageY);
+//                stageLocLabel.text += "cell: " + cell.e(1) + "," + cell.e(2) + "\t\t";
+
+        stageLocLabel2.text = stageLocLabel.text;
+
+    });
+
+    // =================================== Global Event ===========================================
+    // attach mouse handlers directly to the source canvas.
+    // better than calling from canvas tag for cross browser compatibility:
+    gStage.addEventListener("stagemousemove", onGameMove);
+    gStage.addEventListener("stagemousedown", onGameDown);
+    gStage.addEventListener("stagemouseup", onGameUp);
+    gStage.addEventListener("click", onGameclick);
+
+
+    loadData();
+}
+
+// ========================================= Start ==============================================
+function startGame() {
+    gCursor = new Cursor();
+    gIsoState = new IsoState();
+    gShop = new DialogShop();
+    gHud = new Hub();
+    gEntityInfo = new EntityInfo();
+    gUIContainer.addChild(gHud);
+    sendLogin();
+}
+
+var gLoginData = null;
+function onLoginComplete() {
+    gMainBar = new MainBar();
+    gUIContainer.addChild(gMainBar);
+    gIsLogin = true;
+    gDarkLock.show(false);
+
+}
+
+var gCur_seconds;
+function tick(event) {
+    gCur_seconds = getSeconds();
+
+    if (gIsoState) {
+        zorder(gIsoState.zorderList);
+        gIsoState.product_gold.forEach(function (elemment, index, array) {
+            elemment.checkHarvest(gCur_seconds);
+        })
+    }
+    if (gEntityInfo) {
+        gEntityInfo.update(gCur_seconds);
+    }
+    if (gHud) {
+        gHud.energycountdown(gCur_seconds);
+    }
+    fpsLabel.text = Math.round(createjs.Ticker.getMeasuredFPS()) + " fps";
+    gStage.update(event);
+}
+
+function onGameclick(evt) {
+    if (!isHitUI(evt.stageX, evt.stageY)) {
+        if (gCursor) {
+            gCursor.handleOnStageClick(evt);
+        }
+    }
+}
+
+function onGameMove(evt) {
+    if (gIsoState && gCursor && !isHitUI(evt.stageX, evt.stageY)) {
+        gIsoState.handleOnStageMove(evt);
+        gCursor.handleOnStageMove(evt);
+
+    }
+}
+
+function onGameDown(evt) {
+    if (gIsoState && gCursor && !isHitUI(evt.stageX, evt.stageY)) {
+        gIsoState.handleOnStageMouseDown(evt);
+        gCursor.handleOnStageMouseDown(evt);
+    }
+}
+
+function onGameUp(evt) {
+    if (gIsoState && gCursor && !isHitUI(evt.stageX, evt.stageY)) {
+        gIsoState.handleOnStageMouseUp(evt);
+        gCursor.handleOnStageMouseUp(evt);
+
+    }
+}
+
+function showIBShop(visible) {
+
+    if (gDarkLock == null || gShop == null) {
+        return;
+    }
+
+    if (visible) {
+        gDarkLock.show(true);
+        gUIContainer.addChild(gShop);
+    }
+    else {
+        gDarkLock.show(false);
+        gUIContainer.removeChild(gShop);
+    }
+}
+
+//=======================================Functions =========================
+function loadData() {
+    var manifest = [
+        {src: "assets/window_shop.json", id: "window_shop"},
+        {src: "assets/window_shop.png", id: "window_shop_texture"},
+        {src: "assets/map_icons.json", id: "map_icons"},
+        {src: "assets/map_icons.png", id: "map_icons_texture"},
+        {src: "assets/gold.json", id: "gold"},
+        {src: "assets/gold.png", id: "gold_texture"},
+        {src: "assets/localize.json", id: "localize"}
+    ];
+
+    // loader is global
+    gLoader = new createjs.LoadQueue();
+    gLoader.on("complete", this.loadDataCompleted, this);
+    gLoader.loadManifest(manifest);
+}
+
+function loadDataCompleted(evt) {
+    gItemConfig = gLoader.getResult("window_shop").items;
+    // add id property to iteminfo
+    for (var key in gItemConfig) {
+        gItemConfig[key].id = key;
+    }
+
+    gTextData = gLoader.getResult("localize");
+
+    gMap_Icons = new createjs.SpriteSheet(gLoader.getResult("map_icons"));
+    gGoldSheet = new createjs.SpriteSheet(gLoader.getResult("gold"));
+    startGame();
+}
+
+
+</script>
+</head>
+<body onload="webLoaded()">
+<div id="loader"></div>
+<header id="header" class="EaselJS">
+</header>
+<div id="content">
+    <canvas id="farmCanvas" width="1028" height="768"></canvas>
+</div>
+</body>
+</html>

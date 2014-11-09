@@ -1,0 +1,15 @@
+{
+  "data": {
+    "width": 7,
+    "height": 7,
+	"step" : 2
+  },
+  "anim": {
+    "images": [
+      "assets/concert_hall.png"
+    ],
+    "frames": [
+		[0,0,340,244,0,170,146],[0,244,339,215,0,169,119]
+	]
+  }
+}

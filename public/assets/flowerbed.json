@@ -1,0 +1,15 @@
+{
+  "data": {
+    "width": 1,
+    "height": 1,
+	"step" : 3
+  },
+  "anim": {
+    "images": [
+      "assets/flowerbed.png"
+    ],
+    "frames": [
+		[0,0,53,39,0,24.5,13]
+    ]
+  }
+}

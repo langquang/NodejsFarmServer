@@ -29,10 +29,13 @@ var mapConfig = require('./config/MapConfig').mapConf;
 var shortId = require('shortid');
 var Helper = require('./lib/utils/helper');
 
-io.set('origins', 'http://localhost:63342');
+//io.set('origins', 'http://localhost:63342');
+
+// we are specifying the html directory as another public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function (req, res) {
-    res.sendFile('/index.html', { root: path.join(__dirname, '/') });
+    res.sendfile(__dirname + '/public/farm.html');
 });
 
 //==================================== global variable ==========================

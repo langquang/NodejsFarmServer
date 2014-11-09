@@ -1,0 +1,16 @@
+{
+    "animations":
+    {
+        "run": [0, 25, "jump"],
+        "jump": [26, 63, "run"]
+	},
+    "images": ["assets/runningGrant.png"],
+    "frames":
+    {
+        "height": 292.5,
+        "width":165.75,
+        "regX": 0,
+        "regY": 0,
+        "count": 64
+    }
+}

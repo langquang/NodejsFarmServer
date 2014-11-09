@@ -1,0 +1,15 @@
+{
+  "data": {
+    "width": 1,
+    "height": 1,
+	"step" : 3
+  },
+  "anim": {
+    "images": [
+      "assets/cayxanh.png"
+    ],
+    "frames": [
+		[0,0,68,88,0,33.5,67.5]
+    ]
+  }
+}

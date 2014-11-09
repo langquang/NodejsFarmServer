@@ -1,0 +1,15 @@
+{
+  "data": {
+    "width": 1,
+    "height": 1,
+	"step" : 3
+  },
+  "anim": {
+    "images": [
+      "assets/caydua.png"
+    ],
+    "frames": [
+		[0,0,47,100,0,22,73]
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+    "animations":
+    {
+	},
+  "images": [
+    "assets/building.png"
+  ],
+  "frames": [
+    [
+      0,
+      0,
+      135,
+      205,
+      0,
+      60.5,
+      125.95
+    ]
+  ]
+}

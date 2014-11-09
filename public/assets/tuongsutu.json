@@ -1,0 +1,15 @@
+{
+  "data": {
+    "width": 2,
+    "height": 4,
+	"step" : 3
+  },
+  "anim": {
+    "images": [
+      "assets/tuongsutu.png"
+    ],
+    "frames": [
+		[0,0,127,91,0,75,55]
+    ]
+  }
+}

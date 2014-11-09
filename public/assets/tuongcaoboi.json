@@ -1,0 +1,15 @@
+{
+  "data": {
+    "width": 1,
+    "height": 1,
+	"step" : 3
+  },
+  "anim": {
+    "images": [
+      "assets/tuongcaoboi.png"
+    ],
+    "frames": [
+		[0,0,54,91,0,29,67]
+    ]
+  }
+}
