@@ -86,8 +86,9 @@ io.on('connection', function (socket) {
                         gameDoc.lastLogin = Helper.getSeconds();
 
                         //******************************************************* Cheat
-                        gameDoc.gold = 100000000;
-                        gameDoc.energy = 20;
+//                        gameDoc.gold = 100000000;
+//                        gameDoc.energy = 20;
+                        //****************************************************** end cheat
 
                         player.game = gameDoc;
                         player.game.updateEnegry();
