@@ -244,21 +244,26 @@ io.on('connection', function (socket) {
         if (m_listSocket.hasItem(socket.id)) {
             var player = m_listSocket.getItem(socket.id);
             if (player != null) {
-                if (player.getId() == params.friendId) // go home
-                {
+                if (player.getId() == params.friendId) { // go home
                     socket.emit(_msg_visit_, {result: true, buildings: player.buildings.map, userId: params.friendId});
-                }
-                else    // visit friend
-                {
-                    buildingsModel.get(params.friendId, function (err, doc) {
-                        if (err) {
-                            console.log("visit fail" + params.friendId);
-                            socket.emit(_msg_visit_, {result: false});
-                            return;
-                        }
-                        console.log("visit success" + params.friendId);
-                        socket.emit(_msg_visit_, {result: true, buildings: doc.map, userId: params.friendId});
-                    })
+                } else{  // visit friend
+                    var friend = m_listPlayer.getItem(params.friendId);
+                    if (friend != null) {
+                        // friend online
+                        socket.emit(_msg_visit_, {result: true, buildings: friend.buildings.map, userId: params.friendId});
+                    } else {
+                        // friend offline
+                        buildingsModel.get(params.friendId, function (err, doc) {
+                            if (err) {
+                                console.log("visit fail" + params.friendId);
+                                socket.emit(_msg_visit_, {result: false});
+                                return;
+                            }
+                            console.log("visit success" + params.friendId);
+                            socket.emit(_msg_visit_, {result: true, buildings: doc.map, userId: params.friendId});
+                        })
+                    }
+
                 }
             }
         }
@@ -269,11 +274,10 @@ io.on('connection', function (socket) {
     });
     //===================================== boots friend ===========================
     socket.on(_msg_boots_, function (params) {
-        if( m_listSocket.hasItem(socket.id) )
-        {
-            var player = m_listSocket.getItem(socket.id)
-            if( player != null ){
-                if( player.friends.hasOwnProperty(params.friendId) && player.friends[params.friendId] > 0){
+        if (m_listSocket.hasItem(socket.id)) {
+            var player = m_listSocket.getItem(socket.id);
+            if (player != null) {
+                if (player.friends.hasOwnProperty(params.friendId) && player.friends[params.friendId] > 0) {
                     player.friends[params.friendId]--;
                     player.game.gold += 10;
                     socket.emit(_msg_boots_, {result: true});
@@ -281,7 +285,6 @@ io.on('connection', function (socket) {
                     return;
                 }
             }
-
         }
         socket.emit(_msg_boots_, {result: false});
         console.log("Boots fail");
@@ -308,7 +311,7 @@ function responseLogin(player) {
         }
     });
 
-    // add friend to current usser
+    // add friend to current user
     for (var key in player.friends) {
         if (m_friend10.indexOf(key) == -1) {
             delete player.friends[key];
@@ -364,11 +367,11 @@ function savePlayer(player) {
     });
 }
 
-function updateLogin(player){
+function updateLogin(player) {
     var curday = Math.floor(Helper.getSeconds() / 86400);
     var lastday = Math.floor(player.game.lastLogin / 86400);
-    if( curday > lastday ){
-        for(var key in player.friends){
+    if (curday > lastday) {
+        for (var key in player.friends) {
             player.friends[key] = 5;
         }
     }
