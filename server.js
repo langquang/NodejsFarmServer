@@ -4,9 +4,7 @@
 var express = require('express');
 var crypt = require('./lib/crypt');
 
-var accountModel = require('./lib/models/accountmodel');
-var sessionModel = require('./lib/models/sessionmodel');
-var stateModel = require('./lib/models/statemodel');
+
 var checkUserId = require('./lib/models/checkuseridmodel');
 var gameModel = require('./lib/models/gamemodel');
 var buildingsModel = require('./lib/models/buildinglistmodel');
